@@ -16,7 +16,7 @@ export const SectionHome = () => {
                 <Button variant="primary" onClick={() => window.location.href = "#combinatoria-educativa"}>
                     Comenzar ahora
                 </Button>
-                <Button variant="outline">
+                <Button variant="outline" onClick={() => window.location.href = "/schedule"}>
                     Proyecto de prueba
                 </Button>
             </div>
