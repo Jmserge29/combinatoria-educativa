@@ -1,16 +1,40 @@
 import { useState, useEffect } from 'react';
 import { SectionContributors } from '../Landing/Sections/section-contributors';
 
+// Sección individual con horarios
+interface Section {
+  section: string;
+  days: string[];
+  startTime: string;
+  endTime: string;
+}
+
+// Materia con múltiples secciones
+interface Subject {
+  id: number;
+  name: string;
+  sections: Section[];
+}
+
+// Datos del formulario
+interface FormData {
+  subjectName: string;
+  section: string;
+  startTime: string;
+  endTime: string;
+  selectedDays: string[];
+}
+
 const ScheduleCombinationsPage = () => {
-  const [subjects, setSubjects] = useState([]);
-  const [formData, setFormData] = useState({
+  const [subjects, setSubjects] = useState<Subject[]>([]);
+  const [formData, setFormData] = useState<FormData>({
     subjectName: '',
     section: '',
     startTime: '08:00',
     endTime: '10:00',
     selectedDays: []
   });
-  const [validCombinations, setValidCombinations] = useState([]);
+  const [validCombinations, setValidCombinations] = useState<Section[][]>([]);
   const [currentCombinationIndex, setCurrentCombinationIndex] = useState(0);
 
   const days = ['L', 'M', 'W', 'J', 'V', 'S'];
@@ -19,12 +43,12 @@ const ScheduleCombinationsPage = () => {
   // HELPER FUNCTIONS
   // ============================================================================
 
-  const timeToMinutes = (time ) => {
+  const timeToMinutes = (time: string) => {
     const [hours, minutes] = time.split(':').map(Number);
     return hours * 60 + minutes;
   };
 
-  const hasConflict = (sec1, sec2) => {
+  const hasConflict = (sec1: Section, sec2: Section) => {
     const sharedDays = sec1.days.filter(d => sec2.days.includes(d));
     if (sharedDays.length === 0) return false;
 
@@ -36,7 +60,7 @@ const ScheduleCombinationsPage = () => {
     return (start1 < end2 && end1 > start2);
   };
 
-  const generateCombinations = (arrays) => {
+  const generateCombinations = (arrays: Section[][]) : Section[][] => {
     if (arrays.length === 0) return [[]];
     const [first, ...rest] = arrays;
     const combinationsOfRest = generateCombinations(rest);
@@ -49,7 +73,7 @@ const ScheduleCombinationsPage = () => {
     return result;
   };
 
-  const isValidCombination = (combination) => {
+  const isValidCombination = (combination: Section[]) => {
     for (let i = 0; i < combination.length; i++) {
       for (let j = i + 1; j < combination.length; j++) {
         if (hasConflict(combination[i], combination[j])) {
@@ -64,7 +88,7 @@ const ScheduleCombinationsPage = () => {
   // EVENT HANDLERS
   // ============================================================================
 
-  const toggleDay = (day) => {
+  const toggleDay = (day: string) => {
     setFormData(prev => ({
       ...prev,
       selectedDays: prev.selectedDays.includes(day)
@@ -113,11 +137,11 @@ const ScheduleCombinationsPage = () => {
     });
   };
 
-  const removeSubject = (id) => {
+  const removeSubject = (id : number) => {
     setSubjects(subjects.filter(s => s.id !== id));
   };
 
-  const removeSection = (subjectId, sectionIndex) => {
+  const removeSection = (subjectId: number, sectionIndex: number) => {
     setSubjects(subjects.map(s => {
       if (s.id === subjectId) {
         const updatedSections = s.sections.filter((_, idx) => idx !== sectionIndex);
@@ -184,7 +208,7 @@ const ScheduleCombinationsPage = () => {
       </header>
 
       {/* Calculator Section */}
-      <section id="calculadora" className="py-6">
+      <section id="calculadora" className="py -6">
         <div className="container mx-auto px-6">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-16">
@@ -430,7 +454,7 @@ const ScheduleCombinationsPage = () => {
       <SectionContributors/>
 
       {/* Styles */}
-      <style jsx>{`
+      <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;600;700&display=swap');
 
         @keyframes fadeInUp {
